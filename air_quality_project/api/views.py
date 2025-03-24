@@ -1,12 +1,15 @@
 import requests
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+import os
+from air_quality_project.settings import API_KEY
 
-API_KEY = "bbfdb69e92e1999f8dc6d326b98e69be"  # Замените на ваш API ключ
+API_KEY = API_KEY
 
 @api_view(['GET'])
 def get_cities(request, city_name):
     """Получение списка городов по названию"""
+    print(API_KEY)
     location_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city_name}&limit=5&appid={API_KEY}"
     response = requests.get(location_url)
     if response.status_code != 200:
