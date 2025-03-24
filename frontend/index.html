@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wezaero Gardo</title>
+    <script>
+        async function fetchCities() {
+            let cityName = document.getElementById("city-input").value;
+            let response = await fetch(`http://127.0.0.1:8000/api/cities/${cityName}/`);
+            let data = await response.json();
+            let cityList = document.getElementById("city-list");
+            cityList.innerHTML = "";
+            
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+
+            data.forEach((city, index) => {
+                let option = document.createElement("option");
+                option.value = index;
+                option.innerText = `${city.name}, ${city.country}`;
+                cityList.appendChild(option);
+            });
+        }
+
+        async function fetchAirQuality() {
+            let cityIndex = document.getElementById("city-list").value;
+            let response = await fetch(`http://127.0.0.1:8000/api/cities/${document.getElementById("city-input").value}/`);
+            let data = await response.json();
+            let city = data[cityIndex];
+
+            let airQualityResponse = await fetch(`http://127.0.0.1:8000/api/air_quality/${city.lat}/${city.lon}/`);
+            let airQualityData = await airQualityResponse.json();
+
+            document.getElementById("result").innerText = JSON.stringify(airQualityData, null, 2);
+        }
+    </script>
+</head>
+<body>
+    <h1>Wezaero Gardo</h1>
+    <input type="text" id="city-input" placeholder="Введите город">
+    <button onclick="fetchCities()">Найти</button>
+    <select id="city-list"></select>
+    <button onclick="fetchAirQuality()">Получить данные</button>
+    <pre id="result"></pre>
+</body>
+</html>
