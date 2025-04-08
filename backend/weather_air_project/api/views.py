@@ -2,7 +2,7 @@ import requests
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 import os
-from air_quality_project.settings import API_KEY
+from weather_air_project.settings import API_KEY
 
 API_KEY = API_KEY
 
@@ -118,13 +118,11 @@ def generate_health_recommendations(data):
         recommendations['weather_desc'] = "Пасмурно. Возможно, вам не хватает солнечного света - рассмотрите приём витамина D."
     elif 'clear' in weather_desc:
         recommendations['weather_desc'] = "Ясно. Не забудьте солнцезащитный крем в солнечные часы."
-    
     return recommendations
 
 @api_view(['GET'])
 def get_cities(request, city_name):
     """Получение списка городов по названию"""
-    print(API_KEY)
     location_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city_name}&limit=5&appid={API_KEY}"
     response = requests.get(location_url)
     if response.status_code != 200:
@@ -157,6 +155,7 @@ def get_air_quality(request, lat, lon):
         return Response({"error": "Неверный формат координат"}, status=400)
 
     # Получаем данные о качестве воздуха
+    print(lat, lon)
     air_quality_url = f"http://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={API_KEY}"
     air_quality_response = requests.get(air_quality_url)
     if air_quality_response.status_code != 200:
@@ -179,5 +178,6 @@ def get_air_quality(request, lat, lon):
         "recommendations": generate_health_recommendations({"air_quality": air_quality_data, 
                                                             "weather": weather_data,})
     }
+    print(result)
     
     return Response(result)
