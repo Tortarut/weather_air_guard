@@ -29,7 +29,6 @@ def generate_health_recommendations(data):
     humidity = main_weather.get('humidity', 0)
     pressure = main_weather.get('pressure', 0)
     visibility = weather_data.get('visibility', 10000)
-    print("+-+-+", visibility)
     wind_speed = weather_data.get('wind', {}).get('speed', 0)
     wind_gust = weather_data.get('wind', {}).get('gust', 0)
     weather_desc = weather_data.get('weather', [{}])[0].get('description', '').lower()
@@ -156,7 +155,6 @@ def get_air_quality(request, lat, lon):
         return Response({"error": "Неверный формат координат"}, status=400)
 
     # Получаем данные о качестве воздуха
-    print(lat, lon)
     air_quality_url = f"http://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={API_KEY}"
     air_quality_response = requests.get(air_quality_url)
     if air_quality_response.status_code != 200:
@@ -179,5 +177,4 @@ def get_air_quality(request, lat, lon):
         "recommendations": generate_health_recommendations({"air_quality": air_quality_data, 
                                                             "weather": weather_data,})
     }
-    print(result)
     return Response(result)
