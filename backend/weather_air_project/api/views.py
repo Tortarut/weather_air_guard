@@ -28,7 +28,8 @@ def generate_health_recommendations(data):
     feels_like = main_weather.get('feels_like', 0)
     humidity = main_weather.get('humidity', 0)
     pressure = main_weather.get('pressure', 0)
-    visibility = weather_data.get('visibility', 10000)  # в метрах
+    visibility = weather_data.get('visibility', 10000)
+    print("+-+-+", visibility)
     wind_speed = weather_data.get('wind', {}).get('speed', 0)
     wind_gust = weather_data.get('wind', {}).get('gust', 0)
     weather_desc = weather_data.get('weather', [{}])[0].get('description', '').lower()
@@ -179,5 +180,4 @@ def get_air_quality(request, lat, lon):
                                                             "weather": weather_data,})
     }
     print(result)
-    
     return Response(result)

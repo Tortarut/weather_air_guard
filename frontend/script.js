@@ -41,9 +41,17 @@ function displayData(city_value, data) {
     let weather_desc = data.weather.weather[0].description;
     let rec = data.recommendations;
 
+    // Функция для проверки значения и замены на "Нет данных" если undefined/null
+    function getValue(value) {
+        return value !== undefined && value !== null ? value : "Нет данных";
+    }
+
     function renderItem(label, value, key = null) {
-        let recommendation = key && rec[key] ? `<p class="recommendation">${rec[key]}</p>` : "";
-        return `<div class="data-item"><strong>${label}:</strong> ${value} ${recommendation}</div>`;
+        // Обрабатываем значение
+        const displayValue = getValue(value);
+        // Обрабатываем рекомендацию
+        const recommendation = key && rec[key] ? `<p class="recommendation">${rec[key]}</p>` : "";
+        return `<div class="data-item"><strong>${label}:</strong> ${displayValue} ${recommendation}</div>`;
     }
 
     let resultDiv = document.getElementById("result");
@@ -55,48 +63,48 @@ function displayData(city_value, data) {
         <div class="data-section">
             <h2>💨 Качество воздуха</h2>
             ${renderItem("AQI (Индекс качества воздуха)", data.air_quality.list[0].main.aqi, "aqi")}
-            ${renderItem("CO (Угарный газ)", air.co + " µg/m³", "co")}
-            ${renderItem("NO₂ (Диоксид азота)", air.no2 + " µg/m³", "no2")}
-            ${renderItem("O₃ (Озон)", air.o3 + " µg/m³", "o3")}
-            ${renderItem("SO₂ (Диоксид серы)", air.so2 + " µg/m³", "so2")}
-            ${renderItem("PM2.5 (Тонкие частицы)", air.pm2_5 + " µg/m³", "pm2_5")}
-            ${renderItem("PM10 (Грубые частицы)", air.pm10 + " µg/m³", "pm10")}
-            ${renderItem("NH₃ (Аммиак)", air.nh3 + " µg/m³", "nh3")}
+            ${renderItem("CO (Угарный газ)", air.co ? air.co + " µg/m³" : "Нет данных", "co")}
+            ${renderItem("NO₂ (Диоксид азота)", air.no2 ? air.no2 + " µg/m³" : "Нет данных", "no2")}
+            ${renderItem("O₃ (Озон)", air.o3 ? air.o3 + " µg/m³" : "Нет данных", "o3")}
+            ${renderItem("SO₂ (Диоксид серы)", air.so2 ? air.so2 + " µg/m³" : "Нет данных", "so2")}
+            ${renderItem("PM2.5 (Тонкие частицы)", air.pm2_5 ? air.pm2_5 + " µg/m³" : "Нет данных", "pm2_5")}
+            ${renderItem("PM10 (Грубые частицы)", air.pm10 ? air.pm10 + " µg/m³" : "Нет данных", "pm10")}
+            ${renderItem("NH₃ (Аммиак)", air.nh3 ? air.nh3 + " µg/m³" : "Нет данных", "nh3")}
         </div>
 
         <div class="data-section">
             <h2>⛅️ Погода</h2>
-            ${renderItem("Температура", weather.temp + "°C", "temp")}
-            ${renderItem("Ощущается как", weather.feels_like + "°C", "feels_like")}
-            ${renderItem("Давление", weather.pressure + " hPa", "pressure")}
-            ${renderItem("Влажность", weather.humidity + "%", "humidity")}
+            ${renderItem("Температура", weather.temp ? weather.temp + "°C" : "Нет данных", "temp")}
+            ${renderItem("Ощущается как", weather.feels_like ? weather.feels_like + "°C" : "Нет данных", "feels_like")}
+            ${renderItem("Давление", weather.pressure ? weather.pressure + " hPa" : "Нет данных", "pressure")}
+            ${renderItem("Влажность", weather.humidity ? weather.humidity + "%" : "Нет данных", "humidity")}
         </div>
 
         <div class="data-section">
             <h2>🌬 Ветер</h2>
-            ${renderItem("Скорость ветра", wind.speed + " м/с", "wind_speed")}
-            ${renderItem("Порывы ветра", wind.gust + " м/с", "wind_gust")}
+            ${renderItem("Скорость ветра", wind.speed ? wind.speed + " м/с" : "Нет данных", "wind_speed")}
+            ${renderItem("Порывы ветра", wind.gust ? wind.gust + " м/с" : "Нет данных", "wind_gust")}
         </div>
 
         <div class="data-section">
             <h2>☁️ Облачность</h2>
-            ${renderItem("Облачность", clouds.all + "%")}
+            ${renderItem("Облачность", clouds.all ? clouds.all + "%" : "Нет данных")}
         </div>
 
         <div class="data-section">
             <h2>👀 Видимость</h2>
-            ${renderItem("Видимость", visibility + " м", "visibility")}
+            ${renderItem("Видимость", visibility ? visibility + " м" : "Нет данных", "visibility")}
         </div>
 
         <div class="data-section">
             <h2>🌦 Погодные условия</h2>
-            ${renderItem("Описание", weather_desc, "weather_desc")}
+            ${renderItem("Описание", weather_desc ? weather_desc : "Нет данных", "weather_desc")}
         </div>
 
         <div class="data-section">
             <h2>🌅 Солнце</h2>
-            ${renderItem("Восход", new Date(sys.sunrise * 1000).toLocaleTimeString())}
-            ${renderItem("Закат", new Date(sys.sunset * 1000).toLocaleTimeString())}
+            ${renderItem("Восход", sys.sunrise ? new Date(sys.sunrise * 1000).toLocaleTimeString() : "Нет данных")}
+            ${renderItem("Закат", sys.sunset ? new Date(sys.sunset * 1000).toLocaleTimeString() : "Нет данных")}
         </div>
     `;
 }
