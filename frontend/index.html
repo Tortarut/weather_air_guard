@@ -8,21 +8,99 @@
 </head>
 <body>
     <div class="container">
-      <h1>🌤 Weather Air Guard</h1>
-      <div class="form-group">
-        <input type="text" id="city-input" placeholder="Введите город">
-        <button onclick="fetchCities()">Найти</button>
-      </div>
-  
-      <div class="form-group">
-        <select id="city-list"></select>
-        <button onclick="fetchAirQuality()">Получить данные</button>
-      </div>
-  
-      <div id="result"></div>
+        <header class="app-header">
+            <h1>🌤 Weather Air Guard</h1>
+            
+            <!-- Auth buttons -->
+            <div id="auth-buttons" class="form-group">
+                <button onclick="openModal('loginModal')" class="btn-primary">Войти</button>
+                <button onclick="openModal('registerModal')" class="btn-secondary">Регистрация</button>
+            </div>
+
+            <!-- User info and actions -->
+            <div id="user-info" style="display: none;">
+                <div class="user-greeting">
+                    <span id="user-greeting"></span>
+                    <button onclick="openModal('bookmarksModal')" class="btn-icon" title="Мои закладки">⭐️</button>
+                </div>
+                <button onclick="logout()" class="logout-btn">Выйти</button>
+            </div>
+        </header>
+
+        <main class="app-content">
+            <div class="search-section">
+                <div class="form-group">
+                    <input type="text" id="city-input" placeholder="Введите город" class="search-input">
+                    <button onclick="fetchCities()" class="btn-primary">Найти</button>
+                </div>
+
+                <div class="form-group">
+                    <select id="city-list" class="city-select"></select>
+                    <button onclick="fetchAirQuality()" class="btn-primary">Получить данные</button>
+                    <button id="add-bookmark-btn" onclick="addBookmark()" class="btn-secondary" style="display:none;">
+                        <span class="btn-icon">⭐️</span>
+                        В закладки
+                    </button>
+                </div>
+            </div>
+
+            <div id="result"></div>
+        </main>
     </div>
-  
+
+    <!-- Модальное окно закладок -->
+    <div id="bookmarksModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>⭐️ Мои закладки</h2>
+                <span class="close" onclick="closeModal('bookmarksModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <ul id="bookmarks-list" class="bookmarks-grid"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно входа -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Вход</h2>
+                <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form class="auth-form" onsubmit="event.preventDefault(); login();">
+                    <div class="form-group">
+                        <input type="text" id="login-username" placeholder="Логин" required>
+                        <input type="password" id="login-password" placeholder="Пароль" required>
+                        <button type="submit" class="btn-primary">Войти</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно регистрации -->
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Регистрация</h2>
+                <span class="close" onclick="closeModal('registerModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form class="auth-form" onsubmit="event.preventDefault(); register();">
+                    <div class="form-group">
+                        <input type="text" id="register-username" placeholder="Логин" required>
+                        <input type="email" id="register-email" placeholder="Email" required>
+                        <input type="password" id="register-password" placeholder="Пароль" required>
+                        <input type="password" id="register-password2" placeholder="Повторите пароль" required>
+                        <button type="submit" class="btn-primary">Зарегистрироваться</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
-  </body>
-  
+</body>
 </html>

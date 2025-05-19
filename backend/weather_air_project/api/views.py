@@ -1,8 +1,12 @@
 import requests
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
 import os
 from weather_air_project.settings import API_KEY
+from .models import BookmarkedCity
+from .serializers import BookmarkedCitySerializer
 
 API_KEY = API_KEY
 
@@ -178,3 +182,31 @@ def get_air_quality(request, lat, lon):
                                                             "weather": weather_data,})
     }
     return Response(result)
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def bookmarked_cities(request):
+    """Получение списка закладок пользователя и добавление новой закладки"""
+    if request.method == 'GET':
+        cities = BookmarkedCity.objects.filter(user=request.user)
+        serializer = BookmarkedCitySerializer(cities, many=True)
+        return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        serializer = BookmarkedCitySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_bookmarked_city(request, city_id):
+    """Удаление города из закладок"""
+    try:
+        city = BookmarkedCity.objects.get(id=city_id, user=request.user)
+    except BookmarkedCity.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    city.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
