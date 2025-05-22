@@ -32,7 +32,6 @@ function updateAuthUI() {
         if (addBookmarkBtn) addBookmarkBtn.style.display = '';
         if (bookmarksSection) bookmarksSection.style.display = '';
         
-        // Независимо от наличия DOM-элемента — пробуем загрузить закладки
         fetchBookmarks();
     } else {
         if (authButtons) authButtons.style.display = 'flex';
@@ -64,11 +63,11 @@ async function login() {
             body: JSON.stringify({ username, password })
         });
 
-        const data = await res.json();  // 👈 здесь мы читаем тело ОДИН РАЗ
+        const data = await res.json();
 
         if (res.ok) {
             setAuth(data.access, username);
-            closeModal('loginModal'); // 👈 закрытие модального окна ПРИ УСПЕХЕ
+            closeModal('loginModal');
         } else {
             alert(data.detail || 'Ошибка входа! Проверьте логин и пароль.');
         }
@@ -93,7 +92,7 @@ async function register() {
         const res = await fetch(`${API_BASE}/auth/register/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, email, password })
+            body: JSON.stringify({ username, email, password, password2})
         });
         
         const data = await res.json();
@@ -101,15 +100,21 @@ async function register() {
         if (res.ok) {
             alert('Регистрация успешна! Теперь войдите.');
             closeModal('registerModal');
-            // Clear form
             document.getElementById('register-username').value = '';
             document.getElementById('register-email').value = '';
             document.getElementById('register-password').value = '';
             document.getElementById('register-password2').value = '';
-            // Open login modal
             openModal('loginModal');
         } else {
-            alert(data.detail || 'Ошибка регистрации. Проверьте введенные данные.');
+             if (data.password) {
+                alert('Ошибка в пароле: ' + data.password.join('\n'));
+            } else if (data.username) {
+                alert('Ошибка в имени пользователя: ' + data.username.join('\n'));
+            } else if (data.email) {
+                alert('Ошибка в email: ' + data.email.join('\n'));
+            } else {
+                alert(data.detail || 'Ошибка регистрации. Проверьте введенные данные.');
+            }
         }
     } catch (error) {
         console.error('Registration error:', error);
@@ -131,7 +136,6 @@ async function addBookmark() {
     let city = data[cityIndex];
     if (!city) return alert('Сначала выберите город!');
     
-    // Сохраняем название города как одну строку
     const cityName = `${city.name}, ${city.country}`;
     
     const res = await fetch(`${API_BASE}/api/bookmarks/`, {
@@ -147,10 +151,10 @@ async function addBookmark() {
         })
     });
     if (res.ok) {
-        alert('Город добавлен в закладки!');
+        alert('Город добавлен в избранное!');
         fetchBookmarks();
     } else {
-        alert('Ошибка добавления в закладки!');
+        alert('Ошибка добавления в избранное!');
     }
 }
 
@@ -163,7 +167,7 @@ async function fetchBookmarks() {
         const data = await res.json();
         renderBookmarks(data);
     } else {
-        document.getElementById('bookmarks-list').innerHTML = '<li>Ошибка загрузки закладок</li>';
+        document.getElementById('bookmarks-list').innerHTML = '<li>Ошибка загрузки избранное</li>';
     }
 }
 
@@ -171,7 +175,7 @@ function renderBookmarks(bookmarks) {
     const list = document.getElementById('bookmarks-list');
     list.innerHTML = '';
     if (bookmarks.length === 0) {
-        list.innerHTML = '<li>Нет закладок</li>';
+        list.innerHTML = '<li>Нет избранных городов</li>';
         return;
     }
     bookmarks.forEach(bm => {
@@ -258,15 +262,12 @@ function displayData(city_value, data) {
     let weather_desc = data.weather.weather[0].description;
     let rec = data.recommendations;
 
-    // Функция для проверки значения и замены на "Нет данных" если undefined/null
     function getValue(value) {
         return value !== undefined && value !== null ? value : "Нет данных";
     }
 
     function renderItem(label, value, key = null) {
-        // Обрабатываем значение
         const displayValue = getValue(value);
-        // Обрабатываем рекомендацию
         const recommendation = key && rec[key] ? `<p class="recommendation">${rec[key]}</p>` : "";
         return `<div class="data-item"><strong>${label}:</strong> ${displayValue} ${recommendation}</div>`;
     }
@@ -339,7 +340,6 @@ function closeModal(id) {
     if (modal) {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
-        // Очищаем поля формы при закрытии
         if (id === 'loginModal') {
             document.getElementById('login-username').value = '';
             document.getElementById('login-password').value = '';
@@ -352,7 +352,6 @@ function closeModal(id) {
     }
 }
 
-// Закрытие при клике вне модального окна
 window.onclick = function(event) {
     if (event.target.classList.contains('modal')) {
         closeModal(event.target.id);

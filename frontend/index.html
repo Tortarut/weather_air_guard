@@ -21,7 +21,7 @@
             <div id="user-info" style="display: none;">
                 <div class="user-greeting">
                     <span id="user-greeting"></span>
-                    <button onclick="openModal('bookmarksModal')" class="btn-icon" title="Мои закладки">⭐️</button>
+                    <button onclick="openModal('bookmarksModal')" class="btn-icon" title="Избранное">⭐️</button>
                 </div>
                 <button onclick="logout()" class="logout-btn">Выйти</button>
             </div>
@@ -39,7 +39,7 @@
                     <button onclick="fetchAirQuality()" class="btn-primary">Получить данные</button>
                     <button id="add-bookmark-btn" onclick="addBookmark()" class="btn-secondary" style="display:none;">
                         <span class="btn-icon">⭐️</span>
-                        В закладки
+                        В избранное
                     </button>
                 </div>
             </div>
@@ -52,7 +52,7 @@
     <div id="bookmarksModal" class="modal">
         <div class="modal-content modal-large">
             <div class="modal-header">
-                <h2>⭐️ Мои закладки</h2>
+                <h2>⭐️ Избранное</h2>
                 <span class="close" onclick="closeModal('bookmarksModal')">&times;</span>
             </div>
             <div class="modal-body">
